@@ -1,9 +1,12 @@
 package com.example.library;
 
 import org.junit.jupiter.api.BeforeEach;
+
+
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 public class LibraryTest {
     private books bookCollection;
     private students studentCollection;
@@ -21,7 +24,33 @@ public class LibraryTest {
         testBook = new book(1, "Test Book", "Test Author", 5);
         testStudent = new student("John Doe", "12345");
     }
+    
 
+
+
+    @Test
+    void testDisplayBookDetails() {
+        // Redirect System.out to capture output
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        // Call the method
+        Library.displayBookDetails(testBook);
+
+        // Assert the captured output
+        String expectedOutput = "S.No: 1\n" +
+                "Name: Test Book\n" +
+                "Author: Test Author\n" +
+                "Available Qty: 5\n" +
+                "Total Qty: 5\n";
+
+        String actualOutput = outContent.toString().trim().replace("\r\n", "\n");
+        assertEquals(expectedOutput.trim(), actualOutput);
+
+
+        // Reset System.out
+        System.setOut(System.out);
+    }
     @Test
     void testCreateBook() {
         book newBook = Library.createBook(1, "Test Book", "Test Author", 5);
@@ -101,6 +130,27 @@ public class LibraryTest {
         
         assertNotNull(foundBooks, "Found books array should not be null even when empty");
         assertEquals(0, foundBooks.length, "Should return empty array for non-existent author");
+    }
+    @Test
+    void testHandleSearchBySnoNotFoundMessage() {
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Library.handleSearchBySno(bookCollection, 999);
+
+        assertEquals("No Book for Serial No 999 Found.".trim(), outContent.toString().trim());
+        System.setOut(System.out);
+    }
+
+    @Test
+    void testHandleSearchByAuthorNameNotFoundMessage() {
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Library.handleSearchByAuthorName(bookCollection, "Unknown Author");
+
+        assertEquals("No Books of Unknown Author Found.".trim(), outContent.toString().trim());
+        System.setOut(System.out);
     }
 
 }

@@ -45,10 +45,11 @@ public class students {
     public void checkOutBook(books book, String regNum, int sNo) {
         int studentIndex = this.isStudent(regNum);
         if (studentIndex != -1) {
-            book.showAllBooks();
+            book.showAllBooks();  // This is just to view all books, can be removed for testing
 
-            book b = book.checkOutBook(sNo);
+            book b = book.checkOutBook(sNo);  // Fetch the book from the collection
             if (b != null) {
+                // Check if the student already has this book
                 for (int i = 0; i < theStudents[studentIndex].booksCount; i++) {
                     if (theStudents[studentIndex].borrowedBooks[i].sNo == sNo) {
                         System.out.println("This book has already been checked out by the student.");
@@ -56,11 +57,13 @@ public class students {
                     }
                 }
 
+                // Ensure the book is available and student can borrow it
                 if (b.bookQtyCopy > 0) {
                     if (theStudents[studentIndex].booksCount < 3) {
                         theStudents[studentIndex].borrowedBooks[theStudents[studentIndex].booksCount] = b;
                         theStudents[studentIndex].booksCount++;
-                        b.bookQtyCopy--;
+                        b.bookQtyCopy--;  // Decrement available book quantity
+                        System.out.println("Book checked out successfully.");
                     } else {
                         System.out.println("Student cannot borrow more than 3 books.");
                     }
@@ -72,6 +75,7 @@ public class students {
             }
         }
     }
+
 
     public void checkInBook(book b) {
         b.bookQtyCopy++;
